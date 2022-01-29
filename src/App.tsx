@@ -3,6 +3,7 @@ import * as React from "react";
 import { Route, Routes } from "react-router";
 import { About } from "./About";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
+import { PullRequestDetail } from "./PullRequestDetail";
 import { PullRequestTable } from "./PullRequestTable";
 
 export const App = () => (
@@ -13,6 +14,7 @@ export const App = () => (
         <VStack spacing={8}>
           <Routes>
             <Route path="/" element={<PullRequestTable />} />
+            <Route path="/pulls/:pullId" element={<PullRequestDetail />} />
             <Route path="about" element={<About />} />
           </Routes>
         </VStack>

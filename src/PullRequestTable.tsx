@@ -1,14 +1,8 @@
-import {
-  Table,
-  TableCaption,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/table";
+import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { fetchComments, fetchPulls } from "./service/gitHubService";
+import { stringComparator } from "./utils";
 
 type PrRecord = {
   number: string;
@@ -24,34 +18,33 @@ export const PullRequestTable = () => {
   useEffect(() => {
     (async () => {
       const pulls = await fetchPulls();
-      const records = pulls.map((pull: any) => ({
+      const idOrderedPrRecords = pulls.map((pull: any) => ({
         number: pull.number,
         title: pull.title,
         user: pull.user.login,
         state: pull.state,
         comments: 0,
         createdAt: pull.created_at,
-      })) as PrRecord[];
+      })).sort((a: any, b: any) => stringComparator(a.number, b.number));
 
-      const newPrRecords = await Promise.all(
-        [...records]
-          .sort((a, b) => ((a.number < b.number) ? -1 : 1))
-          .map(async (pullRequest) => {
-            const commentObject = await fetchComments(pullRequest.number);
+      setPrRecords(
+        await Promise.all(
+          idOrderedPrRecords.map(async (pullRequest: PrRecord) => {
+            const comment = await fetchComments(pullRequest.number);
             return {
               ...pullRequest,
-              comments: commentObject.length,
+              comments: comment.length,
             };
           }),
+        ),
       );
-      setPrRecords(newPrRecords);
     })();
   }, []);
+
   return (
     <>
       {prRecords.length && (
         <Table variant="simple" size="small">
-          <TableCaption>Imperial to metric conversion factors</TableCaption>
           <Thead>
             <Tr>
               <Th>#</Th>
@@ -65,7 +58,11 @@ export const PullRequestTable = () => {
           <Tbody>
             {prRecords.map((record) => (
               <Tr key={record.number}>
-                <Td>{record.number}</Td>
+                <Td>
+                  <Link to={`/pulls/${record.number}`}>
+                    {record.number}
+                  </Link>
+                </Td>
                 <Td>{record.title}</Td>
                 <Td>{record.user}</Td>
                 <Td>{record.state}</Td>
