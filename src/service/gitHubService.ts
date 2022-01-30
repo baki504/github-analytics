@@ -31,3 +31,15 @@ export const fetchComments = async (pullId: string) => {
     throw new Error(error as string);
   }
 };
+
+export const fetchPrFiles = async (pullId: string) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/pulls/${pullId}/files`,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};

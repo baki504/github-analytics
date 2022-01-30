@@ -1,7 +1,11 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchComments, fetchPulls } from "./service/gitHubService";
+import {
+  fetchComments,
+  fetchPrFiles,
+  fetchPulls,
+} from "./service/gitHubService";
 import { stringComparator } from "./utils";
 
 type PrRecord = {
@@ -10,6 +14,10 @@ type PrRecord = {
   user: string;
   state: string;
   comments: number;
+  files: number;
+  additions: number;
+  deletions: number;
+  changes: number;
   createdAt: string;
 };
 
@@ -30,10 +38,27 @@ export const PullRequestTable = () => {
       setPrRecords(
         await Promise.all(
           idOrderedPrRecords.map(async (pullRequest: PrRecord) => {
-            const comment = await fetchComments(pullRequest.number);
+            const { number: prId } = pullRequest;
+            const comment = await fetchComments(prId);
+            const prFiles = await fetchPrFiles(prId);
+            const { additions, deletions, changes } = prFiles.reduce(
+              (
+                sum: { additions: number; deletions: number; changes: number },
+                pr: any,
+              ) => ({
+                additions: sum.additions + pr.additions,
+                deletions: sum.deletions + pr.deletions,
+                changes: sum.changes + pr.changes,
+              }),
+              { additions: 0, deletions: 0, changes: 0 },
+            );
             return {
               ...pullRequest,
               comments: comment.length,
+              files: prFiles.length,
+              additions,
+              deletions,
+              changes,
             };
           }),
         ),
@@ -53,6 +78,10 @@ export const PullRequestTable = () => {
               <Th>state</Th>
               <Th>created at</Th>
               <Th isNumeric>comments</Th>
+              <Th isNumeric>files</Th>
+              <Th isNumeric>additions</Th>
+              <Th isNumeric>deletions</Th>
+              <Th isNumeric>changes</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -68,6 +97,10 @@ export const PullRequestTable = () => {
                 <Td>{record.state}</Td>
                 <Td>{record.createdAt}</Td>
                 <Td isNumeric>{record.comments}</Td>
+                <Td isNumeric>{record.files}</Td>
+                <Td isNumeric>{record.additions}</Td>
+                <Td isNumeric>{record.deletions}</Td>
+                <Td isNumeric>{record.changes}</Td>
               </Tr>
             ))}
           </Tbody>
