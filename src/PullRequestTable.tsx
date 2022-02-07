@@ -1,6 +1,7 @@
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Box, Heading, Link, VStack } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   fetchComments,
   fetchPrFiles,
@@ -19,6 +20,7 @@ type PrRecord = {
   deletions: number;
   changes: number;
   createdAt: string;
+  link: string;
 };
 
 export const PullRequestTable = () => {
@@ -33,6 +35,7 @@ export const PullRequestTable = () => {
         state: pull.state,
         comments: 0,
         createdAt: pull.created_at,
+        link: pull.html_url,
       })).sort((a: any, b: any) => stringComparator(a.number, b.number));
 
       setPrRecords(
@@ -68,44 +71,59 @@ export const PullRequestTable = () => {
 
   return (
     <>
-      {prRecords.length && (
-        <Table variant="simple" size="small">
-          <Thead>
-            <Tr>
-              <Th>#</Th>
-              <Th>title</Th>
-              <Th>user</Th>
-              <Th>state</Th>
-              <Th>created at</Th>
-              <Th isNumeric>comments</Th>
-              <Th isNumeric>files</Th>
-              <Th isNumeric>additions</Th>
-              <Th isNumeric>deletions</Th>
-              <Th isNumeric>changes</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {prRecords.map((record) => (
-              <Tr key={record.number}>
-                <Td>
-                  <Link to={`/pulls/${record.number}`}>
-                    {record.number}
-                  </Link>
-                </Td>
-                <Td>{record.title}</Td>
-                <Td>{record.user}</Td>
-                <Td>{record.state}</Td>
-                <Td>{record.createdAt}</Td>
-                <Td isNumeric>{record.comments}</Td>
-                <Td isNumeric>{record.files}</Td>
-                <Td isNumeric>{record.additions}</Td>
-                <Td isNumeric>{record.deletions}</Td>
-                <Td isNumeric>{record.changes}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      )}
+      <Heading as="h2" marginTop="5">
+        Pull Requests
+      </Heading>
+      <Box marginTop={5}>
+        {prRecords.length
+          ? (
+            <Table variant="simple" size="md">
+              <Thead>
+                <Tr>
+                  <Th>#</Th>
+                  <Th>title</Th>
+                  <Th>user</Th>
+                  <Th>state</Th>
+                  <Th>created at</Th>
+                  <Th isNumeric>comments</Th>
+                  <Th isNumeric>files</Th>
+                  <Th isNumeric>additions</Th>
+                  <Th isNumeric>deletions</Th>
+                  <Th isNumeric>changes</Th>
+                  <Th>Link</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {prRecords.map((record) => (
+                  <Tr key={record.number}>
+                    <Td>
+                      <Link href={`/pulls/${record.number}`}>
+                        {record.number}
+                      </Link>
+                    </Td>
+                    <Td>{record.title}</Td>
+                    <Td>{record.user}</Td>
+                    <Td>{record.state}</Td>
+                    <Td>{record.createdAt}</Td>
+                    <Td isNumeric>{record.comments}</Td>
+                    <Td isNumeric>{record.files}</Td>
+                    <Td isNumeric>{record.additions}</Td>
+                    <Td isNumeric>{record.deletions}</Td>
+                    <Td isNumeric>{record.changes}</Td>
+                    <Td>
+                      <Box textAlign={"center"}>
+                        <Link href={record.link} isExternal>
+                          <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </Box>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          )
+          : "Connecting..."}
+      </Box>
     </>
   );
 };

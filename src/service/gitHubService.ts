@@ -1,17 +1,23 @@
 import axios from "axios";
 
-const BASE_URL =
-  `https://api.github.com/repos/${process.env.REACT_APP_REPOSITORY_OWNER}/${process.env.REACT_APP_REPOSITORY_NAME}`;
+const hostName = process.env.REACT_APP_HOST_NAME;
+const repositoryOwner = process.env.REACT_APP_REPOSITORY_OWNER;
+const repositoryName = process.env.REACT_APP_REPOSITORY_NAME;
+const acceptHeader = process.env.REACT_APP_ACCEPT_HEADER || "";
+const gitHubToken = process.env.REACT_APP_GITHUB_TOKEN || "";
 
-const headers = {
-  "Accept": "application/vnd.github.v3+json",
-  "Authorization": process.env.REACT_APP_GITHUB_TOKEN || "",
-};
+const ENDPOINT_BASE =
+  `https://${hostName}/repos/${repositoryOwner}/${repositoryName}`;
 
-export const fetchPulls = async () => {
+export const sendRequest = async (uri: string) => {
+  const headers = {
+    "Accept": acceptHeader,
+    "Authorization": gitHubToken,
+  };
+
   try {
     const response = await axios.get(
-      `${BASE_URL}/pulls`,
+      `${ENDPOINT_BASE}/${uri}`,
       { headers },
     );
     return response.data;
@@ -20,26 +26,8 @@ export const fetchPulls = async () => {
   }
 };
 
-export const fetchComments = async (pullId: string) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/pulls/${pullId}/comments`,
-      { headers },
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(error as string);
-  }
-};
-
-export const fetchPrFiles = async (pullId: string) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/pulls/${pullId}/files`,
-      { headers },
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(error as string);
-  }
-};
+export const fetchPulls = async () => sendRequest("pulls");
+export const fetchComments = async (pullId: string) =>
+  sendRequest(`pulls/${pullId}/comments`);
+export const fetchPrFiles = async (pullId: string) =>
+  sendRequest(`pulls/${pullId}/files`);

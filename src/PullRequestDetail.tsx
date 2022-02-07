@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { useParams } from "react-router";
 import { fetchComments } from "./service/gitHubService";
 import { stringComparator } from "./utils";
+import { Box, Flex, Heading, Stack } from "@chakra-ui/layout";
 
 type CommentRecord = {
   id: string;
@@ -14,16 +15,10 @@ type CommentRecord = {
   createdAt: string;
 };
 
-type SummaryRecord = {
-  user: string;
-  comments: number;
-};
-
 export const PullRequestDetail = () => {
   const navigate = useNavigate();
   const { pullId } = useParams();
   const [comments, setComments] = useState<CommentRecord[]>([]);
-  const [summary, setSummary] = useState<SummaryRecord[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -43,39 +38,42 @@ export const PullRequestDetail = () => {
 
   return (
     <>
-      <h2>Pull Request: {pullId}</h2>
-      <p></p>
-      <p></p>
-      <p></p>
-      {comments.length && (
-        <Table variant="simple" size="small">
-          <Thead>
-            <Tr>
-              <Th>id</Th>
-              <Th>comment</Th>
-              <Th>user</Th>
-              <Th>created at</Th>
-            </Tr>
-          </Thead>
-          {(
-            <Tbody>
-              {comments.map((record: CommentRecord) => (
-                <Tr key={record.id}>
-                  <Td>
-                    {record.id}
-                  </Td>
-                  <Td style={{ whiteSpace: "pre-line" }}>
-                    <ReactMarkdown>{record.comment}</ReactMarkdown>
-                  </Td>
-                  <Td>{record.user}</Td>
-                  <Td>{record.createdAt}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          )}
-        </Table>
-      )}
-      <Button colorScheme="blue" onClick={() => navigate(-1)}>Back</Button>
+      <Heading as="h2" marginTop="5">
+        {"title"} #{pullId}
+      </Heading>
+      <Box marginTop={5}>
+        {comments.length && (
+          <Table variant="simple" size="md">
+            <Thead>
+              <Tr>
+                <Th>id</Th>
+                <Th>comment</Th>
+                <Th>user</Th>
+                <Th>created at</Th>
+              </Tr>
+            </Thead>
+            {(
+              <Tbody>
+                {comments.map((record: CommentRecord) => (
+                  <Tr key={record.id}>
+                    <Td>
+                      {record.id}
+                    </Td>
+                    <Td style={{ whiteSpace: "pre-line" }}>
+                      <ReactMarkdown>{record.comment}</ReactMarkdown>
+                    </Td>
+                    <Td>{record.user}</Td>
+                    <Td>{record.createdAt}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            )}
+          </Table>
+        )}
+      </Box>
+      <Button marginTop={5} variant="outline" onClick={() => navigate(-1)}>
+        Back
+      </Button>
     </>
   );
 };
