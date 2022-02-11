@@ -5,13 +5,16 @@ import ReactDOM from "react-dom";
 import { App } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import * as serviceWorker from "./serviceWorker";
+import { GitHubContextProvider } from "./component/GitHubContextProvider";
 
 ReactDOM.render(
   <React.StrictMode>
     <ColorModeScript />
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <GitHubContextProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </GitHubContextProvider>
   </React.StrictMode>,
   document.getElementById("root"),
 );

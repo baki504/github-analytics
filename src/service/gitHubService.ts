@@ -26,8 +26,8 @@ export const sendRequest = async (uri: string) => {
   }
 };
 
-export const fetchPulls = async () => sendRequest("pulls");
-export const fetchComments = async (pullId: string) =>
+export const callPulls = async () => sendRequest("pulls");
+export const callComments = async (pullId: string) =>
   sendRequest(`pulls/${pullId}/comments`);
-export const fetchPrFiles = async (pullId: string) =>
+export const callPrFiles = async (pullId: string) =>
   sendRequest(`pulls/${pullId}/files`);

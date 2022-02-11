@@ -3,14 +3,14 @@ import {
   Box,
   Flex,
   IconButton,
-  Link,
   Stack,
   Text,
   useBreakpointValue,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { ColorModeSwitcher } from "./ColorModeSwitcher";
+import { Link } from "react-router-dom";
+import { ColorModeSwitcher } from "../ColorModeSwitcher";
 
 export const Header = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -53,8 +53,8 @@ export const Header = () => {
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
             <Stack direction={"row"} spacing={5}>
-              <Link href={"/pulls"}>Pull requests</Link>
-              <Link href={"/summary"}>PR Summary</Link>
+              <Link to={`/pulls`}>Pull requests</Link>
+              <Link to={`/summary`}>PR summary</Link>
             </Stack>
           </Flex>
         </Flex>

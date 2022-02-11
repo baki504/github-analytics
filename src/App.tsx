@@ -7,12 +7,11 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 import { Route, Routes } from "react-router";
-import { About } from "./About";
-import { Header } from "./Header";
-import { PullRequestDetail } from "./PullRequestDetail";
-import { PullRequestSummary } from "./PullRequestSummary";
-import { PullRequestTable } from "./PullRequestTable";
-import { Top } from "./Top";
+import { Header } from "./component/Header";
+import { PullRequestDetail } from "./component/PullRequestDetail";
+import { PullRequestSummary } from "./component/PullRequestSummary";
+import { PullRequestTable } from "./component/PullRequestTable";
+import { Top } from "./component/Top";
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -25,7 +24,6 @@ export const App = () => (
             <Route path="/summary" element={<PullRequestSummary />} />
             <Route path="/pulls" element={<PullRequestTable />} />
             <Route path="/pulls/:pullId" element={<PullRequestDetail />} />
-            <Route path="/about" element={<About />} />
           </Routes>
         </Container>
       </VStack>
