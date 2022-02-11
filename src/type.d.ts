@@ -36,3 +36,7 @@ type Summary = {
   averageCommentsPerPr: number;
   averageFilesPerPr: number;
 };
+
+type Column = {
+  [key: string]: string;
+};
