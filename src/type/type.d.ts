@@ -4,6 +4,7 @@ type State = {
   count: number;
   isLoading: boolean;
   pulls: PullRequest[];
+  summary: Summary[];
 };
 
 type Action = { type: string; payload?: any };

@@ -1,46 +1,12 @@
 import { Heading, Text } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo } from "react";
 import { useSortBy, useTable } from "react-table";
-import { stringComparator } from "../utils/utils";
 import { GitHubContext } from "./GitHubContextProvider";
-
-const getPrSummary = (pulls: PullRequest[]): Summary[] =>
-  pulls
-    .reduce((summaryRecords: Summary[], pull: PullRequest) => {
-      const pr = summaryRecords.find((element) => element.user === pull.user);
-      if (pr) {
-        pr.totalPrs++;
-        pr.totalComments = pr.totalComments + pull.comments.length;
-        pr.filesChanged = pr.filesChanged + pull.filesChanged;
-        pr.averageComments = pr.totalComments / pr.totalPrs;
-        pr.averageFiles = pr.filesChanged / pr.totalPrs;
-        return summaryRecords;
-      }
-      return [
-        ...summaryRecords,
-        {
-          user: pull.user,
-          totalPrs: 1,
-          totalComments: pull.comments.length,
-          filesChanged: pull.filesChanged,
-          averageComments: pull.comments.length,
-          averageFiles: pull.filesChanged,
-        },
-      ];
-    }, [])
-    .sort((a, b) => stringComparator(a.user, b.user));
 
 export const PullRequestSummary = () => {
   const { state } = useContext(GitHubContext);
-  const { pulls } = state;
-  const [summary, setSummary] = useState<Summary[]>([]);
-  const [initialized, setInitialized] = useState<boolean>(false);
-
-  useEffect(() => {
-    !initialized && setSummary(getPrSummary(pulls));
-    setInitialized(true);
-  }, [summary, pulls, initialized]);
+  const { summary } = state;
 
   const data = useMemo<Column[]>(
     () =>

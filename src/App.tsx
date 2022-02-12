@@ -1,4 +1,3 @@
-import { Box, Heading, Text } from "@chakra-ui/layout";
 import {
   ChakraProvider,
   Container,

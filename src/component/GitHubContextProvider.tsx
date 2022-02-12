@@ -3,6 +3,7 @@ import {
   FETCH_PULLS_FAILURE,
   FETCH_PULLS_REQUEST,
   FETCH_PULLS_SUCCESS,
+  UPDATE_PR_SUMMARY,
 } from "../utils/action";
 
 const reducer = (state: State, action: Action) => {
@@ -24,6 +25,11 @@ const reducer = (state: State, action: Action) => {
         isLoading: false,
         error: action.payload,
       };
+    case UPDATE_PR_SUMMARY:
+      return {
+        ...state,
+        summary: action.payload,
+      };
     default:
       return state;
   }
@@ -40,6 +46,7 @@ const initialState = {
   count: 0,
   isLoading: false,
   pulls: [],
+  summary: [],
 };
 
 export const GitHubContextProvider: React.FC = ({ children }) => {

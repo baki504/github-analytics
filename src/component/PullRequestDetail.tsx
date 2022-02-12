@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button";
-import { Box, Heading, Text } from "@chakra-ui/layout";
+import { Heading, Text } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useContext, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
