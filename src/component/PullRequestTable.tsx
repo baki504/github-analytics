@@ -1,12 +1,11 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Box, Heading, Link as ChakraLink } from "@chakra-ui/layout";
+import { Box, Heading, Link as ChakraLink, Text } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useContext, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
 import { fetchPulls } from "../utils/dataFetcher";
 import { GitHubContext } from "./GitHubContextProvider";
-import { chakra } from "@chakra-ui/react";
 
 export const PullRequestTable = () => {
   const { state, dispatch } = useContext(GitHubContext);
@@ -27,7 +26,7 @@ export const PullRequestTable = () => {
         changes: pull.changes.toString(),
         link: pull.link,
       })),
-    [pulls]
+    [pulls],
   );
 
   const columns = useMemo(
@@ -84,14 +83,14 @@ export const PullRequestTable = () => {
         accessor: "link",
         Cell: (e: any) => (
           <Box textAlign={"center"}>
-            <ChakraLink to={e.value} isExternal>
+            <ChakraLink href={e.value} isExternal>
               <ExternalLinkIcon mx="2px" />
             </ChakraLink>
           </Box>
         ),
       },
     ],
-    []
+    [],
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -101,58 +100,68 @@ export const PullRequestTable = () => {
     pulls.length === 0 && fetchPulls(dispatch);
   }, [dispatch, pulls]);
 
-  const getSortedIcon = (isSortedDesc?: boolean) =>
-    isSortedDesc ? " 🔽" : " 🔼";
+  const getSortedIcon = (isSortedDesc?: boolean) => isSortedDesc ? " 🔽" : " 🔼";
 
   return (
     <>
-      <Heading as="h2" marginTop="5">
+      <Heading marginTop={5} as="h3" size="lg">
         Pull Requests
       </Heading>
-      <Box marginTop={5}>
-        {pulls && pulls.length ? (
-          <Table {...getTableProps()} variant="simple" size="sm">
-            <Thead>
-              {headerGroups.map((headerGroup) => (
-                <Tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column: any) => (
-                    <Th
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                      isNumeric={column.isNumeric}
-                    >
-                      {column.render("Header")}
-                      <span>
-                        {column.isSorted
-                          ? getSortedIcon(column.isSortedDesc)
-                          : ""}
-                      </span>
-                    </Th>
-                  ))}
-                </Tr>
-              ))}
-            </Thead>
-            <Tbody {...getTableBodyProps()}>
-              {rows.map((row) => {
-                prepareRow(row);
-                return (
-                  <Tr {...row.getRowProps()}>
-                    {row.cells.map((cell: any) => (
-                      <Td
-                        {...cell.getCellProps()}
-                        isNumeric={cell.column.isNumeric}
+      {pulls && pulls.length
+        ? (
+          <>
+            <Text marginY={5} color={"gray"}>
+              {pulls.length} PRs found.
+            </Text>
+            <Table {...getTableProps()} variant="simple" size="sm">
+              <Thead>
+                {headerGroups.map((
+                  headerGroup,
+                ) => (
+                  <Tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column: any) => (
+                      <Th
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps(),
+                        )}
+                        isNumeric={column.isNumeric}
                       >
-                        {cell.render("Cell")}
-                      </Td>
+                        {column.render("Header")}
+                        <span>
+                          {column.isSorted
+                            ? getSortedIcon(column.isSortedDesc)
+                            : ""}
+                        </span>
+                      </Th>
                     ))}
                   </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        ) : (
-          "Fetching data..."
+                ))}
+              </Thead>
+              <Tbody {...getTableBodyProps()}>
+                {rows.map((row) => {
+                  prepareRow(row);
+                  return (
+                    <Tr {...row.getRowProps()}>
+                      {row.cells.map((cell: any) => (
+                        <Td
+                          {...cell.getCellProps()}
+                          isNumeric={cell.column.isNumeric}
+                        >
+                          {cell.render("Cell")}
+                        </Td>
+                      ))}
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </>
+        )
+        : (
+          <Text marginTop={5} color={"gray"}>
+            Fetching data...
+          </Text>
         )}
-      </Box>
     </>
   );
 };

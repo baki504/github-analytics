@@ -35,6 +35,8 @@ export const GitHubContext = createContext({} as {
 });
 
 const initialState = {
+  repositoryOwner: process.env.REACT_APP_REPOSITORY_OWNER || "",
+  repositoryName: process.env.REACT_APP_REPOSITORY_NAME || "",
   count: 0,
   isLoading: false,
   pulls: [],

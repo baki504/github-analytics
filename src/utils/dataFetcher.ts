@@ -37,7 +37,7 @@ const createPullRequests = async (pulls: any) =>
     comments: 0,
     createdAt: localeDateString(pull.created_at),
     link: pull.html_url,
-  })).sort((a: any, b: any) => stringComparator(a.number, b.number));
+  })).sort((a: any, b: any) => stringComparator(a.createdAt, b.createdAt));
 
 const createComments = async (prId: string) =>
   (await callComments(prId)).map((comment: any) => ({
@@ -46,7 +46,7 @@ const createComments = async (prId: string) =>
     comment: comment.body,
     user: comment.user.login,
     createdAt: localeDateString(comment.created_at),
-  })).sort((a: any, b: any) => stringComparator(a.id, b.id));
+  })).sort((a: any, b: any) => stringComparator(a.createdAt, b.createdAt));
 
 const createPrFileDetails = async (prId: string) => {
   const prFiles = await callPrFiles(prId);

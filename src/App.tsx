@@ -1,3 +1,4 @@
+import { Box, Heading, Text } from "@chakra-ui/layout";
 import {
   ChakraProvider,
   Container,
@@ -11,6 +12,7 @@ import { Header } from "./component/Header";
 import { PullRequestDetail } from "./component/PullRequestDetail";
 import { PullRequestSummary } from "./component/PullRequestSummary";
 import { PullRequestTable } from "./component/PullRequestTable";
+import { RepositoryLink } from "./component/RepositoryLink";
 import { Top } from "./component/Top";
 
 export const App = () => (
@@ -18,7 +20,8 @@ export const App = () => (
     <Header />
     <Grid minH="100vh" p={3}>
       <VStack spacing={8}>
-        <Container maxW={"7xl"}>
+        <Container maxW={".lg"}>
+          <RepositoryLink />
           <Routes>
             <Route path="/" element={<Top />} />
             <Route path="/summary" element={<PullRequestSummary />} />

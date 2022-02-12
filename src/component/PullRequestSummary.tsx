@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/layout";
+import { Heading, Text } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useSortBy, useTable } from "react-table";
@@ -52,7 +52,7 @@ export const PullRequestSummary = () => {
         averageComments: e.averageComments.toString(),
         averageFiles: e.averageFiles.toString(),
       })),
-    [summary]
+    [summary],
   );
 
   const columns = useMemo(
@@ -92,64 +92,76 @@ export const PullRequestSummary = () => {
         isNumeric: true,
       },
     ],
-    []
+    [],
   );
 
-  const getSortedIcon = (isSortedDesc?: boolean) =>
-    isSortedDesc ? " 🔽" : " 🔼";
+  const getSortedIcon = (isSortedDesc?: boolean) => isSortedDesc ? " 🔽" : " 🔼";
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data }, useSortBy);
 
   return (
     <>
-      <Heading as="h2" marginTop="5">
+      <Heading marginTop={5} as="h3" size="lg">
         PR summary
       </Heading>
-      <Box marginTop={5}>
-        {summary && summary.length ? (
-          <Table {...getTableProps()} variant="simple" size="md">
-            <Thead>
-              {headerGroups.map((headerGroup) => (
-                <Tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column: any) => (
-                    <Th
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                      isNumeric={column.isNumeric}
-                    >
-                      {column.render("Header")}
-                      <span>
-                        {column.isSorted
-                          ? getSortedIcon(column.isSortedDesc)
-                          : ""}
-                      </span>
-                    </Th>
-                  ))}
-                </Tr>
-              ))}
-            </Thead>
-            <Tbody {...getTableBodyProps()}>
-              {rows.map((row, rowIndex) => {
-                prepareRow(row);
-                return (
-                  <Tr {...row.getRowProps()}>
-                    {row.cells.map((cell: any, cellIndex) => (
-                      <Td
-                        {...cell.getCellProps()}
-                        isNumeric={cell.column.isNumeric}
+      {summary && summary.length
+        ? (
+          <>
+            <Text marginY={5} color={"gray"}>
+              {summary.length} users summary.
+            </Text>
+            <Table {...getTableProps()} variant="simple" size="md">
+              <Thead>
+                {headerGroups.map((
+                  headerGroup,
+                ) => (
+                  <Tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column: any) => (
+                      <Th
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps(),
+                        )}
+                        isNumeric={column.isNumeric}
                       >
-                        {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
-                      </Td>
+                        {column.render("Header")}
+                        <span>
+                          {column.isSorted
+                            ? getSortedIcon(column.isSortedDesc)
+                            : ""}
+                        </span>
+                      </Th>
                     ))}
                   </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        ) : (
-          "No data."
+                ))}
+              </Thead>
+              <Tbody {...getTableBodyProps()}>
+                {rows.map((row, rowIndex) => {
+                  prepareRow(row);
+                  return (
+                    <Tr {...row.getRowProps()}>
+                      {row.cells.map((cell: any, cellIndex) => (
+                        <Td
+                          {...cell.getCellProps()}
+                          isNumeric={cell.column.isNumeric}
+                        >
+                          {cellIndex === 0
+                            ? rowIndex + 1
+                            : cell.render("Cell")}
+                        </Td>
+                      ))}
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </>
+        )
+        : (
+          <Text marginTop={5} color={"gray"}>
+            No data.
+          </Text>
         )}
-      </Box>
     </>
   );
 };

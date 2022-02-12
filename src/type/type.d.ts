@@ -1,4 +1,6 @@
 type State = {
+  repositoryOwner: string;
+  repositoryName: string;
   count: number;
   isLoading: boolean;
   pulls: PullRequest[];
