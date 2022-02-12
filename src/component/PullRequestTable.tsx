@@ -12,31 +12,31 @@ export const PullRequestTable = () => {
   const { state, dispatch } = useContext(GitHubContext);
   const { pulls } = state;
 
-  const data = useMemo<Column[]>(() =>
-    pulls.map((pull) => ({
-      number: pull.number,
-      title: pull.title,
-      user: pull.user,
-      state: pull.state,
-      createdAt: pull.createdAt,
-      comments: pull.comments.length.toString(),
-      filesChanged: pull.filesChanged.toString(),
-      additions: pull.additions.toString(),
-      deletions: pull.deletions.toString(),
-      changes: pull.changes.toString(),
-      link: pull.link,
-    })), [pulls]);
+  const data = useMemo<Column[]>(
+    () =>
+      pulls.map((pull) => ({
+        number: pull.number,
+        title: pull.title,
+        user: pull.user,
+        state: pull.state,
+        createdAt: pull.createdAt,
+        comments: pull.comments.length.toString(),
+        filesChanged: pull.filesChanged.toString(),
+        additions: pull.additions.toString(),
+        deletions: pull.deletions.toString(),
+        changes: pull.changes.toString(),
+        link: pull.link,
+      })),
+    [pulls]
+  );
 
   const columns = useMemo(
     () => [
       {
         Header: "Number",
         accessor: "number",
-        Cell: (e: any) => (
-          <Link to={`/pulls/${e.value}`}>
-            {e.value}
-          </Link>
-        ),
+        Cell: (e: any) => <Link to={`/pulls/${e.value}`}>{e.value}</Link>,
+        isNumeric: true,
       },
       {
         Header: "Title",
@@ -57,24 +57,27 @@ export const PullRequestTable = () => {
       {
         Header: "Comments",
         accessor: "comments",
-        // Cell: (e: any) => (Number(e.value)),
         isNumeric: true,
       },
       {
         Header: "Files Changed",
         accessor: "filesChanged",
+        isNumeric: true,
       },
       {
         Header: "Additions",
         accessor: "additions",
+        isNumeric: true,
       },
       {
         Header: "Deletions",
         accessor: "deletions",
+        isNumeric: true,
       },
       {
         Header: "Changes",
         accessor: "changes",
+        isNumeric: true,
       },
       {
         Header: "Link",
@@ -88,24 +91,18 @@ export const PullRequestTable = () => {
         ),
       },
     ],
-    [],
+    []
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data }, useSortBy);
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({ columns, data }, useSortBy);
 
   useEffect(() => {
     pulls.length === 0 && fetchPulls(dispatch);
   }, [dispatch, pulls]);
 
-  const getSortedIcon = (
-    isSortedDesc?: boolean,
-  ) => (isSortedDesc ? " 🔽" : " 🔼");
+  const getSortedIcon = (isSortedDesc?: boolean) =>
+    isSortedDesc ? " 🔽" : " 🔼";
 
   return (
     <>
@@ -113,51 +110,48 @@ export const PullRequestTable = () => {
         Pull Requests
       </Heading>
       <Box marginTop={5}>
-        {pulls && pulls.length
-          ? (
-            <Table {...getTableProps()} variant="simple" size="md">
-              <Thead>
-                {headerGroups.map(
-                  (headerGroup) => (
-                    <Tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((
-                        column,
-                      ) => (
-                        <Th
-                          {...column.getHeaderProps(
-                            column.getSortByToggleProps(),
-                          )}
-                          isNumeric={column.isNumeric}
-                        >
-                          {column.render("Header")}
-                          <span>
-                            {column.isSorted
-                              ? getSortedIcon(column.isSortedDesc)
-                              : ""}
-                          </span>
-                        </Th>
-                      ))}
-                    </Tr>
-                  ),
-                )}
-              </Thead>
-              <Tbody {...getTableBodyProps()}>
-                {rows.map((row) => {
-                  prepareRow(row);
-                  return (
-                    <Tr {...row.getRowProps()}>
-                      {row.cells.map((cell) => (
-                        <Td {...cell.getCellProps()}>
-                          {cell.render("Cell")}
-                        </Td>
-                      ))}
-                    </Tr>
-                  );
-                })}
-              </Tbody>
-            </Table>
-          )
-          : "Fetching data..."}
+        {pulls && pulls.length ? (
+          <Table {...getTableProps()} variant="simple" size="sm">
+            <Thead>
+              {headerGroups.map((headerGroup) => (
+                <Tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column: any) => (
+                    <Th
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      isNumeric={column.isNumeric}
+                    >
+                      {column.render("Header")}
+                      <span>
+                        {column.isSorted
+                          ? getSortedIcon(column.isSortedDesc)
+                          : ""}
+                      </span>
+                    </Th>
+                  ))}
+                </Tr>
+              ))}
+            </Thead>
+            <Tbody {...getTableBodyProps()}>
+              {rows.map((row) => {
+                prepareRow(row);
+                return (
+                  <Tr {...row.getRowProps()}>
+                    {row.cells.map((cell: any) => (
+                      <Td
+                        {...cell.getCellProps()}
+                        isNumeric={cell.column.isNumeric}
+                      >
+                        {cell.render("Cell")}
+                      </Td>
+                    ))}
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        ) : (
+          "Fetching data..."
+        )}
       </Box>
     </>
   );

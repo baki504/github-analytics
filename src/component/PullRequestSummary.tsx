@@ -1,40 +1,105 @@
 import { Box, Heading } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useSortBy, useTable } from "react-table";
+import { stringComparator } from "../utils/utils";
 import { GitHubContext } from "./GitHubContextProvider";
 
 const getPrSummary = (pulls: PullRequest[]): Summary[] =>
-  pulls.reduce(
-    (summaryRecords: Summary[], pull: PullRequest) => {
+  pulls
+    .reduce((summaryRecords: Summary[], pull: PullRequest) => {
       const pr = summaryRecords.find((element) => element.user === pull.user);
       if (pr) {
-        pr.prs++;
-        pr.comments = pr.comments + pull.comments.length;
+        pr.totalPrs++;
+        pr.totalComments = pr.totalComments + pull.comments.length;
         pr.filesChanged = pr.filesChanged + pull.filesChanged;
-        pr.averageCommentsPerPr = pr.comments / pr.prs;
-        pr.averageFilesPerPr = pr.filesChanged / pr.prs;
+        pr.averageComments = pr.totalComments / pr.totalPrs;
+        pr.averageFiles = pr.filesChanged / pr.totalPrs;
         return summaryRecords;
       }
-      return [...summaryRecords, {
-        user: pull.user,
-        prs: 1,
-        comments: pull.comments.length,
-        filesChanged: pull.filesChanged,
-        averageCommentsPerPr: pull.comments.length,
-        averageFilesPerPr: pull.filesChanged,
-      }];
-    },
-    [],
-  );
+      return [
+        ...summaryRecords,
+        {
+          user: pull.user,
+          totalPrs: 1,
+          totalComments: pull.comments.length,
+          filesChanged: pull.filesChanged,
+          averageComments: pull.comments.length,
+          averageFiles: pull.filesChanged,
+        },
+      ];
+    }, [])
+    .sort((a, b) => stringComparator(a.user, b.user));
 
 export const PullRequestSummary = () => {
   const { state } = useContext(GitHubContext);
   const { pulls } = state;
-  const [summary, setSummary] = useState<Summary[]>();
+  const [summary, setSummary] = useState<Summary[]>([]);
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
-    !summary && setSummary(getPrSummary(pulls));
-  }, [pulls, summary]);
+    !initialized && setSummary(getPrSummary(pulls));
+    setInitialized(true);
+  }, [summary, pulls, initialized]);
+
+  const data = useMemo<Column[]>(
+    () =>
+      summary.map((e) => ({
+        user: e.user,
+        totalPrs: e.totalPrs.toString(),
+        totalComments: e.totalComments.toString(),
+        totalFilesChanged: e.filesChanged.toString(),
+        averageComments: e.averageComments.toString(),
+        averageFiles: e.averageFiles.toString(),
+      })),
+    [summary]
+  );
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Rank",
+        accessor: (_row: any, i: number) => i + 1,
+        isNumeric: true,
+      },
+      {
+        Header: "User",
+        accessor: "user",
+      },
+      {
+        Header: "Total PRs",
+        accessor: "totalPrs",
+        isNumeric: true,
+      },
+      {
+        Header: "Total Comments",
+        accessor: "totalComments",
+        isNumeric: true,
+      },
+      {
+        Header: "Total Files Changed",
+        accessor: "totalFilesChanged",
+        isNumeric: true,
+      },
+      {
+        Header: "Average Comments",
+        accessor: "averageComments",
+        isNumeric: true,
+      },
+      {
+        Header: "Average Files",
+        accessor: "averageFiles",
+        isNumeric: true,
+      },
+    ],
+    []
+  );
+
+  const getSortedIcon = (isSortedDesc?: boolean) =>
+    isSortedDesc ? " 🔽" : " 🔼";
+
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({ columns, data }, useSortBy);
 
   return (
     <>
@@ -42,36 +107,48 @@ export const PullRequestSummary = () => {
         PR summary
       </Heading>
       <Box marginTop={5}>
-        {summary && summary.length
-          ? (
-            <Table variant="simple" size="md">
-              <Thead>
-                <Tr>
-                  <Th>rank</Th>
-                  <Th>user</Th>
-                  <Th isNumeric>total PRs</Th>
-                  <Th isNumeric>total comments</Th>
-                  <Th isNumeric>total files changed</Th>
-                  <Th isNumeric>average comments</Th>
-                  <Th isNumeric>average files</Th>
+        {summary && summary.length ? (
+          <Table {...getTableProps()} variant="simple" size="md">
+            <Thead>
+              {headerGroups.map((headerGroup) => (
+                <Tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column: any) => (
+                    <Th
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      isNumeric={column.isNumeric}
+                    >
+                      {column.render("Header")}
+                      <span>
+                        {column.isSorted
+                          ? getSortedIcon(column.isSortedDesc)
+                          : ""}
+                      </span>
+                    </Th>
+                  ))}
                 </Tr>
-              </Thead>
-              <Tbody>
-                {summary.map((element, i) => (
-                  <Tr key={i}>
-                    <Td isNumeric>{i + 1}</Td>
-                    <Td>{element.user}</Td>
-                    <Td isNumeric>{element.prs}</Td>
-                    <Td isNumeric>{element.comments}</Td>
-                    <Td isNumeric>{element.filesChanged}</Td>
-                    <Td isNumeric>{element.averageCommentsPerPr}</Td>
-                    <Td isNumeric>{element.averageFilesPerPr}</Td>
+              ))}
+            </Thead>
+            <Tbody {...getTableBodyProps()}>
+              {rows.map((row, rowIndex) => {
+                prepareRow(row);
+                return (
+                  <Tr {...row.getRowProps()}>
+                    {row.cells.map((cell: any, cellIndex) => (
+                      <Td
+                        {...cell.getCellProps()}
+                        isNumeric={cell.column.isNumeric}
+                      >
+                        {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
+                      </Td>
+                    ))}
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          )
-          : "No data."}
+                );
+              })}
+            </Tbody>
+          </Table>
+        ) : (
+          "No data."
+        )}
       </Box>
     </>
   );

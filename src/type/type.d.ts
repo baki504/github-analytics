@@ -30,11 +30,11 @@ type PRComment = {
 
 type Summary = {
   user: string;
-  prs: number;
-  comments: number;
+  totalPrs: number;
+  totalComments: number;
   filesChanged: number;
-  averageCommentsPerPr: number;
-  averageFilesPerPr: number;
+  averageComments: number;
+  averageFiles: number;
 };
 
 type Column = {
