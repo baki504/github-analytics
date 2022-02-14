@@ -12,7 +12,7 @@ import { PullRequestDetail } from "./component/PullRequestDetail";
 import { PullRequestSummary } from "./component/PullRequestSummary";
 import { PullRequestTable } from "./component/PullRequestTable";
 import { RepositoryLink } from "./component/RepositoryLink";
-import { Top } from "./component/Top";
+import { Settings } from "./component/Settings";
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -22,10 +22,10 @@ export const App = () => (
         <Container maxW={".lg"}>
           <RepositoryLink />
           <Routes>
-            <Route path="/" element={<Top />} />
-            <Route path="/summary" element={<PullRequestSummary />} />
+            <Route path="/" element={<Settings />} />
             <Route path="/pulls" element={<PullRequestTable />} />
             <Route path="/pulls/:pullId" element={<PullRequestDetail />} />
+            <Route path="/summary" element={<PullRequestSummary />} />
           </Routes>
         </Container>
       </VStack>

@@ -1,13 +1,15 @@
+import { Button } from "@chakra-ui/button";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Heading, Link as ChakraLink, Text } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useContext, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
 import { updatePrSummary } from "../utils/action";
 import { fetchPulls } from "../utils/dataFetcher";
 import { stringComparator } from "../utils/utils";
 import { GitHubContext } from "./GitHubContextProvider";
+import { SortableHeaderColumn } from "./SortableHeaderColumn";
 
 const getPrSummary = (pulls: PullRequest[]): Summary[] =>
   pulls
@@ -36,8 +38,9 @@ const getPrSummary = (pulls: PullRequest[]): Summary[] =>
     .sort((a, b) => stringComparator(a.user, b.user));
 
 export const PullRequestTable = () => {
+  const navigate = useNavigate();
   const { state, dispatch } = useContext(GitHubContext);
-  const { pulls } = state;
+  const { pulls, repositoryOwner, repositoryName } = state;
 
   const data = useMemo<Column[]>(
     () =>
@@ -129,19 +132,31 @@ export const PullRequestTable = () => {
     updatePrSummary(dispatch, getPrSummary(pulls));
   }, [dispatch, pulls]);
 
-  const getSortedIcon = (isSortedDesc?: boolean) => isSortedDesc ? " 🔽" : " 🔼";
-
   return (
     <>
       <Heading marginTop={5} as="h3" size="lg">
-        Pull Requests
+        <ChakraLink
+          href={`https://github.com/${repositoryOwner}/${repositoryName}/pulls`}
+          isExternal
+        >
+          Pull Requests
+        </ChakraLink>
       </Heading>
-      {pulls && pulls.length
+      <Text marginTop={5} color={"gray"}>
+        {pulls.length} PRs found.
+      </Text>
+      <Box marginY={5}>
+        <Button
+          colorScheme="teal"
+          onClick={() => navigate("/summary")}
+          disabled={pulls.length === 0}
+        >
+          View summary
+        </Button>
+      </Box>
+      {pulls.length
         ? (
           <>
-            <Text marginY={5} color={"gray"}>
-              {pulls.length} PRs found.
-            </Text>
             <Table {...getTableProps()} variant="simple" size="sm">
               <Thead>
                 {headerGroups.map((
@@ -155,12 +170,11 @@ export const PullRequestTable = () => {
                         )}
                         isNumeric={column.isNumeric}
                       >
-                        {column.render("Header")}
-                        <span>
-                          {column.isSorted
-                            ? getSortedIcon(column.isSortedDesc)
-                            : ""}
-                        </span>
+                        <SortableHeaderColumn
+                          column={column.render("Header")}
+                          isSorted={column.isSorted}
+                          isSortedDesc={column.isSortedDesc}
+                        />
                       </Th>
                     ))}
                   </Tr>
