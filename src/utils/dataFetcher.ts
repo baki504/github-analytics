@@ -1,23 +1,27 @@
+import { callComments, callPrFiles, callPulls } from "../service/gitHubService";
 import {
   fetchPullsFailure,
   fetchPullsRequest,
   fetchPullsSuccess,
+  updateRepositoryInfo,
 } from "./action";
-import { callComments, callPrFiles, callPulls } from "../service/gitHubService";
 import { localeDateString, stringComparator } from "./utils";
 
-export const fetchPulls = async (dispatch: React.Dispatch<Action>) => {
+export const fetchPulls = async (
+  dispatch: React.Dispatch<Action>,
+  repositoryKey: string,
+) => {
   fetchPullsRequest(dispatch);
   try {
-    const pulls = await callPulls();
+    const pulls = await callPulls(repositoryKey);
     const pullRequests = await Promise.all(
       (await createPullRequests(pulls)).map(
         async (pullRequest: PullRequest) => {
           const { number: prId } = pullRequest;
           return {
             ...pullRequest,
-            comments: await createComments(prId),
-            ...await createPrFileDetails(prId),
+            comments: await createComments(prId, repositoryKey),
+            ...await createPrFileDetails(prId, repositoryKey),
           };
         },
       ),
@@ -39,8 +43,8 @@ const createPullRequests = async (pulls: any) =>
     link: pull.html_url,
   })).sort((a: any, b: any) => stringComparator(a.createdAt, b.createdAt));
 
-const createComments = async (prId: string) =>
-  (await callComments(prId)).map((comment: any) => ({
+const createComments = async (prId: string, repositoryKey: string) =>
+  (await callComments(repositoryKey, prId)).map((comment: any) => ({
     id: comment.id,
     prId,
     comment: comment.body,
@@ -48,8 +52,8 @@ const createComments = async (prId: string) =>
     createdAt: localeDateString(comment.created_at),
   })).sort((a: any, b: any) => stringComparator(a.createdAt, b.createdAt));
 
-const createPrFileDetails = async (prId: string) => {
-  const prFiles = await callPrFiles(prId);
+const createPrFileDetails = async (prId: string, repositoryKey: string) => {
+  const prFiles = await callPrFiles(repositoryKey, prId);
   const { additions, deletions, changes } = prFiles.reduce(
     (
       sum: { additions: number; deletions: number; changes: number },
@@ -68,3 +72,9 @@ const createPrFileDetails = async (prId: string) => {
     changes,
   };
 };
+
+export const switchRepository = (
+  dispatch: React.Dispatch<Action>,
+  repositoryInfoFrom: RepositoryInfo,
+  repositoryInfoTo: RepositoryInfo,
+) => updateRepositoryInfo(dispatch, { repositoryInfoFrom, repositoryInfoTo });

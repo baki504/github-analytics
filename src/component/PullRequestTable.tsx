@@ -5,6 +5,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useContext, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
+import { BaseLayout } from "../layout/BaseLayout";
 import { updatePrSummary } from "../utils/action";
 import { fetchPulls } from "../utils/dataFetcher";
 import { stringComparator } from "../utils/utils";
@@ -40,7 +41,12 @@ const getPrSummary = (pulls: PullRequest[]): Summary[] =>
 export const PullRequestTable = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useContext(GitHubContext);
-  const { pulls, repositoryOwner, repositoryName } = state;
+  const { pulls, key, owner, name } = state.selectedRepositoryInfo;
+
+  useEffect(() => {
+    key.length > 0 && pulls.length === 0 && fetchPulls(dispatch, key);
+    updatePrSummary(dispatch, getPrSummary(pulls));
+  }, [dispatch, key, pulls]);
 
   const data = useMemo<Column[]>(
     () =>
@@ -127,16 +133,11 @@ export const PullRequestTable = () => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data }, useSortBy);
 
-  useEffect(() => {
-    pulls.length === 0 && fetchPulls(dispatch);
-    updatePrSummary(dispatch, getPrSummary(pulls));
-  }, [dispatch, pulls]);
-
   return (
-    <>
+    <BaseLayout>
       <Heading marginTop={5} as="h3" size="lg">
         <ChakraLink
-          href={`https://github.com/${repositoryOwner}/${repositoryName}/pulls`}
+          href={`https://github.com/${owner}/${name}/pulls`}
           isExternal
         >
           Pull Requests
@@ -205,6 +206,6 @@ export const PullRequestTable = () => {
             Fetching data...
           </Text>
         )}
-    </>
+    </BaseLayout>
   );
 };

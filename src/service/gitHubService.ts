@@ -1,15 +1,10 @@
 import axios from "axios";
 
 const hostName = process.env.REACT_APP_HOST_NAME;
-const repositoryOwner = process.env.REACT_APP_REPOSITORY_OWNER;
-const repositoryName = process.env.REACT_APP_REPOSITORY_NAME;
 const acceptHeader = process.env.REACT_APP_ACCEPT_HEADER || "";
 const gitHubToken = process.env.REACT_APP_GITHUB_TOKEN || "";
 
-const ENDPOINT_BASE =
-  `https://${hostName}/repos/${repositoryOwner}/${repositoryName}`;
-
-export const sendRequest = async (uri: string) => {
+export const sendRequest = async (repositoryKey: string, uri: string) => {
   const headers = {
     "Accept": acceptHeader,
     "Authorization": gitHubToken,
@@ -17,7 +12,7 @@ export const sendRequest = async (uri: string) => {
 
   try {
     const response = await axios.get(
-      `${ENDPOINT_BASE}/${uri}`,
+      `https://${hostName}/repos/${repositoryKey}/${uri}`,
       { headers },
     );
     return response.data;
@@ -26,8 +21,9 @@ export const sendRequest = async (uri: string) => {
   }
 };
 
-export const callPulls = async () => sendRequest("pulls");
-export const callComments = async (pullId: string) =>
-  sendRequest(`pulls/${pullId}/comments`);
-export const callPrFiles = async (pullId: string) =>
-  sendRequest(`pulls/${pullId}/files`);
+export const callPulls = async (repositoryKey: string) =>
+  sendRequest(repositoryKey, "pulls");
+export const callComments = async (repositoryKey: string, pullId: string) =>
+  sendRequest(repositoryKey, `pulls/${pullId}/comments`);
+export const callPrFiles = async (repositoryKey: string, pullId: string) =>
+  sendRequest(repositoryKey, `pulls/${pullId}/files`);

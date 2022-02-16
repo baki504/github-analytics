@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { useParams } from "react-router";
 import { useNavigate } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
+import { BaseLayout } from "../layout/BaseLayout";
 import { GitHubContext } from "./GitHubContextProvider";
 import { PullRequestLink } from "./PullRequestLink";
 import { SortableHeaderColumn } from "./SortableHeaderColumn";
@@ -14,7 +15,9 @@ export const PullRequestDetail = () => {
   const navigate = useNavigate();
   const { pullId } = useParams();
   const { state } = useContext(GitHubContext);
-  const pr = state.pulls.find((pull) => pull.number === pullId);
+  const pr = state.selectedRepositoryInfo.pulls.find((pull) =>
+    pull.number === pullId
+  );
   const comments = useMemo(() => (pr?.comments || []), [pr]);
 
   const data = useMemo<Column[]>(
@@ -60,7 +63,7 @@ export const PullRequestDetail = () => {
     useTable({ columns, data }, useSortBy);
 
   return (
-    <>
+    <BaseLayout>
       <Heading marginTop={5} as="h3" size="lg">
         Pull Request Comments{"  "}
         <PullRequestLink id={pullId || ""} link={pr?.link || ""} />
@@ -120,6 +123,6 @@ export const PullRequestDetail = () => {
             </Tbody>
           </Table>
         )}
-    </>
+    </BaseLayout>
   );
 };

@@ -4,25 +4,26 @@ import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import React, { useContext, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
+import { BaseLayout } from "../layout/BaseLayout";
 import { GitHubContext } from "./GitHubContextProvider";
 import { SortableHeaderColumn } from "./SortableHeaderColumn";
 
 export const PullRequestSummary = () => {
   const navigate = useNavigate();
   const { state } = useContext(GitHubContext);
-  const { summary } = state;
+  const { summaryRecords } = state.selectedRepositoryInfo;
 
   const data = useMemo<Column[]>(
     () =>
-      summary.map((e) => ({
-        user: e.user,
-        totalPrs: e.totalPrs.toString(),
-        totalComments: e.totalComments.toString(),
-        totalFilesChanged: e.filesChanged.toString(),
-        averageComments: e.averageComments.toString(),
-        averageFiles: e.averageFiles.toString(),
+      summaryRecords.map((record) => ({
+        user: record.user,
+        totalPrs: record.totalPrs.toString(),
+        totalComments: record.totalComments.toString(),
+        totalFilesChanged: record.filesChanged.toString(),
+        averageComments: record.averageComments.toString(),
+        averageFiles: record.averageFiles.toString(),
       })),
-    [summary],
+    [summaryRecords],
   );
 
   const columns = useMemo(
@@ -69,12 +70,12 @@ export const PullRequestSummary = () => {
     useTable({ columns, data }, useSortBy);
 
   return (
-    <>
+    <BaseLayout>
       <Heading marginTop={5} as="h3" size="lg">
         PR summary
       </Heading>
       <Text marginTop={5} color={"gray"}>
-        {summary.length} users summary.
+        {summaryRecords.length} users summary.
       </Text>
       <Box marginY={5}>
         <Link to="/summary">
@@ -83,7 +84,7 @@ export const PullRequestSummary = () => {
           </Button>
         </Link>
       </Box>
-      {summary.length > 0 &&
+      {summaryRecords.length > 0 &&
         (
           <Table {...getTableProps()} variant="simple" size="md">
             <Thead>
@@ -127,6 +128,6 @@ export const PullRequestSummary = () => {
             </Tbody>
           </Table>
         )}
-    </>
+    </BaseLayout>
   );
 };

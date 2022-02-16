@@ -1,15 +1,32 @@
 import {
   Box,
   Flex,
+  Select,
   Stack,
   Text,
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { FormEvent, useContext } from "react";
 import { ColorModeSwitcher } from "../ColorModeSwitcher";
-import { SettingsIconLink } from "./SettingsIconLink";
+import { switchRepository } from "../utils/dataFetcher";
+import { GitHubContext } from "./GitHubContextProvider";
+import { AddIconLink } from "./AddIconLink";
 
 export const Header = () => {
+  const { state, dispatch } = useContext(GitHubContext);
+  const { repositoryInfoList, selectedRepositoryInfo, isLoading } = state;
+
+  const switchRepositoryHandler = (e: FormEvent<HTMLSelectElement>) => {
+    const { value } = e.currentTarget;
+    const targetRepository = repositoryInfoList.find((repo) =>
+      repo.key === value
+    );
+    if (targetRepository) {
+      switchRepository(dispatch, selectedRepositoryInfo, targetRepository);
+    }
+  };
+
   return (
     <Box>
       <Flex
@@ -35,13 +52,33 @@ export const Header = () => {
         </Flex>
 
         <Stack
-          flex={{ base: 1, md: 0 }}
+          // flex={{ base: 1, md: 0 }}
           justify={"flex-end"}
           direction={"row"}
           spacing={6}
         >
+          {repositoryInfoList.length > 1 &&
+            (
+              <Select
+                placeholder="Select repository"
+                onChange={switchRepositoryHandler}
+                defaultValue={selectedRepositoryInfo.key}
+                disabled={isLoading}
+              >
+                {repositoryInfoList.map((
+                  repository,
+                ) => (
+                  <option
+                    key={repository.key}
+                    value={repository.key}
+                  >
+                    {repository.key}
+                  </option>
+                ))}
+              </Select>
+            )}
+          <AddIconLink />
           <ColorModeSwitcher justifySelf="flex-end" />
-          <SettingsIconLink />
         </Stack>
       </Flex>
     </Box>

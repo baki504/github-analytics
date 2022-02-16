@@ -12,7 +12,7 @@ import { PullRequestDetail } from "./component/PullRequestDetail";
 import { PullRequestSummary } from "./component/PullRequestSummary";
 import { PullRequestTable } from "./component/PullRequestTable";
 import { RepositoryLink } from "./component/RepositoryLink";
-import { Settings } from "./component/Settings";
+import { Settings } from "./component/NewRepository";
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -20,7 +20,6 @@ export const App = () => (
     <Grid minH="100vh" p={3}>
       <VStack spacing={8}>
         <Container maxW={".lg"}>
-          <RepositoryLink />
           <Routes>
             <Route path="/" element={<Settings />} />
             <Route path="/pulls" element={<PullRequestTable />} />

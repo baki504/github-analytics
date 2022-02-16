@@ -4,22 +4,22 @@ import { GitHubContext } from "./GitHubContextProvider";
 
 export const RepositoryLink = () => {
   const { state } = useContext(GitHubContext);
-  const { repositoryOwner, repositoryName } = state;
+  const { owner, name } = state.selectedRepositoryInfo;
   return (
     <>
       <Heading as="h2" size="xl">
         <Link
-          href={`https://github.com/${repositoryOwner}`}
+          href={`https://github.com/${owner}`}
           isExternal
         >
-          {repositoryOwner}
+          {owner}
         </Link>
         {" / "}
         <Link
-          href={`https://github.com/${repositoryOwner}/${repositoryName}`}
+          href={`https://github.com/${owner}/${name}`}
           isExternal
         >
-          {repositoryName}
+          {name}
         </Link>
       </Heading>
     </>

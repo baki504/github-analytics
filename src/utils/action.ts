@@ -2,6 +2,7 @@ export const FETCH_PULLS_REQUEST = "FETCH_PULLS_REQUEST";
 export const FETCH_PULLS_SUCCESS = "FETCH_PULLS_SUCCESS";
 export const FETCH_PULLS_FAILURE = "FETCH_PULLS_FAILURE";
 export const UPDATE_PR_SUMMARY = "UPDATE_PR_SUMMARY";
+export const UPDATE_REPOSITORY_INFO = "UPDATE_REPOSITORY_INFO";
 
 export const fetchPullsRequest = (dispatch: React.Dispatch<Action>) => {
   return dispatch({ type: FETCH_PULLS_REQUEST });
@@ -26,4 +27,11 @@ export const updatePrSummary = (
   payload: any,
 ) => {
   return dispatch({ type: UPDATE_PR_SUMMARY, payload });
+};
+
+export const updateRepositoryInfo = (
+  dispatch: React.Dispatch<Action>,
+  payload: any,
+) => {
+  return dispatch({ type: UPDATE_REPOSITORY_INFO, payload });
 };
