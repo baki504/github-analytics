@@ -1,20 +1,22 @@
 import {
+  Box,
   Button,
-  Container,
   FormControl,
+  FormLabel,
   Heading,
-  Select,
+  HStack,
+  Input,
   Stack,
+  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FormEvent, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { switchRepository } from "../utils/dataFetcher";
 import { GitHubContext } from "./GitHubContextProvider";
-
 type Props = {};
 
-export const Settings: React.FC<Props> = (props) => {
+export const AddRepository: React.FC<Props> = (props) => {
   const navigate = useNavigate();
   const { state, dispatch } = useContext(GitHubContext);
   const { repositoryInfoList, selectedRepositoryInfo } = state;
@@ -30,55 +32,56 @@ export const Settings: React.FC<Props> = (props) => {
   };
 
   return (
-    <Container
-      maxW={"lg"}
-      bg={useColorModeValue("white", "whiteAlpha.100")}
-      boxShadow={"xl"}
-      rounded={"lg"}
-      p={6}
-      direction={"column"}
-    >
-      <Heading
-        as={"h2"}
-        fontSize={{ base: "xl", sm: "2xl" }}
-        textAlign={"center"}
-        mb={5}
-      >
-        New repository
-      </Heading>
-      <Stack
-        direction={{ base: "column", md: "row" }}
-        as={"form"}
-        spacing={"12px"}
-      >
-        <FormControl>
-          <Select
-            placeholder="Select repository"
-            onChange={switchRepositoryHandler}
-            defaultValue={selectedRepositoryInfo.key}
-          >
-            {repositoryInfoList.map((
-              repository,
-            ) => (
-              <option
-                key={repository.key}
-                value={repository.key}
-              >
-                {repository.key}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl w={{ base: "100%", md: "40%" }}>
-          <Button
-            colorScheme="teal"
-            onClick={() => navigate("/pulls")}
-            w="100%"
-          >
-            OK
-          </Button>
-        </FormControl>
+    <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+      <Stack align={"center"}>
+        <Heading fontSize={"4xl"} textAlign={"center"}>
+          Add repository
+        </Heading>
       </Stack>
-    </Container>
+      <Box
+        rounded={"lg"}
+        bg={useColorModeValue("white", "gray.700")}
+        boxShadow={"lg"}
+        p={8}
+      >
+        <Stack spacing={8}>
+          <HStack>
+            <Box>
+              <FormControl id="ownerName" isRequired>
+                <FormLabel>Owner</FormLabel>
+                <Input type="text" />
+              </FormControl>
+            </Box>
+            <Box>
+              <Text marginTop={5} fontSize="2xl">
+                /
+              </Text>
+            </Box>
+            <Box>
+              <FormControl id="repositoryName" isRequired>
+                <FormLabel>Repository name</FormLabel>
+                <Input type="text" />
+              </FormControl>
+            </Box>
+          </HStack>
+          <Stack spacing={5} pt={2}>
+            <Button
+              colorScheme="teal"
+              size="lg"
+            >
+              Save
+            </Button>
+            <Button
+              colorScheme="teal"
+              size="lg"
+              variant="outline"
+              onClick={() => navigate(`/`)}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </Stack>
+      </Box>
+    </Stack>
   );
 };

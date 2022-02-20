@@ -18,7 +18,7 @@ export const AddIconLink: React.FC<Props> = (props) => {
       variant="ghost"
       color="current"
       marginLeft="2"
-      onClick={() => navigate(`/`)}
+      onClick={() => navigate(`/add`)}
       disabled={isLoading}
       icon={<AddIcon />}
       aria-label={`Move to settings page`}
