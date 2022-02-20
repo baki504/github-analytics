@@ -12,7 +12,7 @@ export const sendRequest = async (repositoryKey: string, uri: string) => {
 
   try {
     const response = await axios.get(
-      `https://${hostName}/repos/${repositoryKey}/${uri}`,
+      `https://${hostName}/repos/${repositoryKey}/${uri}?per_page=100`,
       { headers },
     );
     return response.data;

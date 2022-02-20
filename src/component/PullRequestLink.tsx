@@ -1,12 +1,12 @@
 import { Link, Text } from "@chakra-ui/layout";
-import React from "react";
+import { FC } from "react";
 
 type Props = {
   id: string;
   link: string;
 };
 
-export const PullRequestLink: React.FC<Props> = (props) => {
+export const PullRequestLink: FC<Props> = (props) => {
   return (
     <>
       <Link href={props.link} isExternal>

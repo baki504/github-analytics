@@ -40,7 +40,7 @@ const createPullRequests = async (pulls: any) =>
     state: pull.state,
     comments: 0,
     createdAt: localeDateString(pull.created_at),
-    link: pull.html_url,
+    url: pull.html_url,
   })).sort((a: any, b: any) => stringComparator(a.createdAt, b.createdAt));
 
 const createComments = async (prId: string, repositoryKey: string) =>
@@ -50,6 +50,7 @@ const createComments = async (prId: string, repositoryKey: string) =>
     comment: comment.body,
     user: comment.user.login,
     createdAt: localeDateString(comment.created_at),
+    url: comment.html_url,
   })).sort((a: any, b: any) => stringComparator(a.createdAt, b.createdAt));
 
 const createPrFileDetails = async (prId: string, repositoryKey: string) => {

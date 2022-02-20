@@ -1,11 +1,12 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { Box } from "@chakra-ui/layout";
+import { FC } from "react";
 
 type Props = {
   isSortedDesc?: boolean;
 };
 
-export const SortedIcon: React.FC<Props> = (
+export const SortedIcon: FC<Props> = (
   props,
 ) => (
   <Box as="span" marginLeft={1}>

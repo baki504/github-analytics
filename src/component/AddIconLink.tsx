@@ -1,6 +1,6 @@
 import { IconButton } from "@chakra-ui/button";
 import { AddIcon } from "@chakra-ui/icons";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GitHubContext } from "./GitHubContextProvider";
 
@@ -19,7 +19,8 @@ export const AddIconLink: React.FC<Props> = (props) => {
       color="current"
       marginLeft="2"
       onClick={() => navigate(`/add`)}
-      disabled={isLoading}
+      disabled={true}
+      // disabled={isLoading}
       icon={<AddIcon />}
       aria-label={`Move to settings page`}
       {...props}

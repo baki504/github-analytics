@@ -1,5 +1,5 @@
 import { Heading, Link } from "@chakra-ui/layout";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { GitHubContext } from "./GitHubContextProvider";
 
 export const RepositoryLink = () => {

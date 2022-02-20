@@ -1,5 +1,5 @@
 import { Box, Center, Flex } from "@chakra-ui/layout";
-import React from "react";
+import { FC } from "react";
 import { SortedIcon } from "./SortedIcon";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
   isSortedDesc: boolean | undefined;
 };
 
-export const SortableHeaderColumn: React.FC<Props> = (props) => {
+export const SortableHeaderColumn: FC<Props> = (props) => {
   const { column, isSorted, isSortedDesc } = props;
   return (
     <Flex>

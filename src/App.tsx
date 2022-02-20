@@ -5,12 +5,12 @@ import {
   theme,
   VStack,
 } from "@chakra-ui/react";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Route, Routes } from "react-router";
 import { GitHubContext } from "./component/GitHubContextProvider";
 import { Header } from "./component/Header";
 import { AddRepository } from "./component/NewRepository";
-import { PullRequestDetail } from "./component/PullRequestDetail";
+import { PullRequestComments } from "./component/PullRequestComments";
 import { PullRequestSummary } from "./component/PullRequestSummary";
 import { PullRequestTable } from "./component/PullRequestTable";
 
@@ -33,8 +33,11 @@ export const App = () => {
               />
               <Route path="/add" element={<AddRepository />} />
               <Route path="/pulls" element={<PullRequestTable />} />
-              <Route path="/pulls/:pullId" element={<PullRequestDetail />} />
-              <Route path="/summary" element={<PullRequestSummary />} />
+              <Route
+                path="/pulls/:pullId/comments"
+                element={<PullRequestComments />}
+              />
+              <Route path="/pulls/summary" element={<PullRequestSummary />} />
             </Routes>
           </Container>
         </VStack>

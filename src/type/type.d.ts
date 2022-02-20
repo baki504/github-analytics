@@ -4,6 +4,7 @@ type PRComment = {
   comment: string;
   user: string;
   createdAt: string;
+  url: string;
 };
 
 type PullRequest = {
@@ -17,7 +18,7 @@ type PullRequest = {
   deletions: number;
   changes: number;
   createdAt: string;
-  link: string;
+  url: string;
 };
 
 type RepositoryInfo = {

@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/button";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Heading, Link as ChakraLink, Text } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
-import React, { useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
 import { BaseLayout } from "../layout/BaseLayout";
@@ -61,9 +61,9 @@ export const PullRequestTable = () => {
         additions: pull.additions.toString(),
         deletions: pull.deletions.toString(),
         changes: pull.changes.toString(),
-        link: pull.link,
+        link: pull.url,
       })),
-    [pulls]
+    [pulls],
   );
 
   const columns = useMemo(
@@ -73,7 +73,7 @@ export const PullRequestTable = () => {
         accessor: "number",
         Cell: (e: any) => (
           <ChakraLink>
-            <Link to={`/pulls/${e.value}`}>{e.value}</Link>
+            <Link to={`/pulls/${e.value}/comments`}>{e.value}</Link>
           </ChakraLink>
         ),
         isNumeric: true,
@@ -131,7 +131,7 @@ export const PullRequestTable = () => {
         ),
       },
     ],
-    []
+    [],
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -153,57 +153,63 @@ export const PullRequestTable = () => {
       <Box marginY={5}>
         <Button
           colorScheme="teal"
-          onClick={() => navigate("/summary")}
+          onClick={() => navigate("/pulls/summary")}
           disabled={pulls.length === 0}
         >
           View summary
         </Button>
       </Box>
-      {pulls.length ? (
-        <>
-          <Table {...getTableProps()} variant="simple" size="sm">
-            <Thead>
-              {headerGroups.map((headerGroup) => (
-                <Tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column: any) => (
-                    <Th
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                      isNumeric={column.isNumeric}
-                    >
-                      <SortableHeaderColumn
-                        column={column.render("Header")}
-                        isSorted={column.isSorted}
-                        isSortedDesc={column.isSortedDesc}
-                      />
-                    </Th>
-                  ))}
-                </Tr>
-              ))}
-            </Thead>
-            <Tbody {...getTableBodyProps()}>
-              {rows.map((row) => {
-                prepareRow(row);
-                return (
-                  <Tr {...row.getRowProps()}>
-                    {row.cells.map((cell: any) => (
-                      <Td
-                        {...cell.getCellProps()}
-                        isNumeric={cell.column.isNumeric}
+      {pulls.length
+        ? (
+          <>
+            <Table {...getTableProps()} variant="simple" size="sm">
+              <Thead>
+                {headerGroups.map((
+                  headerGroup,
+                ) => (
+                  <Tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column: any) => (
+                      <Th
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps(),
+                        )}
+                        isNumeric={column.isNumeric}
                       >
-                        {cell.render("Cell")}
-                      </Td>
+                        <SortableHeaderColumn
+                          column={column.render("Header")}
+                          isSorted={column.isSorted}
+                          isSortedDesc={column.isSortedDesc}
+                        />
+                      </Th>
                     ))}
                   </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </>
-      ) : (
-        <Text marginTop={5} color={"gray"}>
-          Fetching data...
-        </Text>
-      )}
+                ))}
+              </Thead>
+              <Tbody {...getTableBodyProps()}>
+                {rows.map((row) => {
+                  prepareRow(row);
+                  return (
+                    <Tr {...row.getRowProps()}>
+                      {row.cells.map((cell: any) => (
+                        <Td
+                          {...cell.getCellProps()}
+                          isNumeric={cell.column.isNumeric}
+                        >
+                          {cell.render("Cell")}
+                        </Td>
+                      ))}
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </>
+        )
+        : (
+          <Text marginTop={5} color={"gray"}>
+            Fetching data...
+          </Text>
+        )}
     </BaseLayout>
   );
 };

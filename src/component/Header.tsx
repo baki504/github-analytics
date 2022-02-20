@@ -8,7 +8,6 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FormEvent, useContext } from "react";
-import { ColorModeSwitcher } from "../ColorModeSwitcher";
 import { switchRepository } from "../utils/dataFetcher";
 import { GitHubContext } from "./GitHubContextProvider";
 import { AddIconLink } from "./AddIconLink";
@@ -22,7 +21,7 @@ export const Header = () => {
   const switchRepositoryHandler = (e: FormEvent<HTMLSelectElement>) => {
     const { value } = e.currentTarget;
     const targetRepository = repositoryInfoList.find(
-      (repo) => repo.key === value
+      (repo) => repo.key === value,
     );
     if (targetRepository) {
       switchRepository(dispatch, selectedRepositoryInfo, targetRepository);
@@ -55,7 +54,6 @@ export const Header = () => {
         </Flex>
 
         <Stack
-          // flex={{ base: 1, md: 0 }}
           justify={"flex-end"}
           direction={"row"}
           spacing={6}
@@ -67,7 +65,9 @@ export const Header = () => {
               defaultValue={selectedRepositoryInfo.key}
               disabled={isLoading}
             >
-              {repositoryInfoList.map((repository) => (
+              {repositoryInfoList.map((
+                repository,
+              ) => (
                 <option key={repository.key} value={repository.key}>
                   {repository.key}
                 </option>
@@ -75,7 +75,6 @@ export const Header = () => {
             </Select>
           )}
           <AddIconLink />
-          <ColorModeSwitcher justifySelf="flex-end" />
         </Stack>
       </Flex>
     </Box>

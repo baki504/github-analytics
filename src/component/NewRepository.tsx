@@ -10,32 +10,29 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FormEvent, useContext } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { switchRepository } from "../utils/dataFetcher";
 import { GitHubContext } from "./GitHubContextProvider";
 type Props = {};
 
 export const AddRepository: React.FC<Props> = (props) => {
   const navigate = useNavigate();
-  const { state, dispatch } = useContext(GitHubContext);
-  const { repositoryInfoList, selectedRepositoryInfo } = state;
+  const { state } = useContext(GitHubContext);
+  const [owner, setOwner] = useState<string>("");
+  const [repositoryName, setRepositoryName] = useState<string>("");
 
-  const switchRepositoryHandler = (e: FormEvent<HTMLSelectElement>) => {
-    const { value } = e.currentTarget;
-    const targetRepository = repositoryInfoList.find((repo) =>
-      repo.key === value
-    );
-    if (targetRepository) {
-      switchRepository(dispatch, selectedRepositoryInfo, targetRepository);
-    }
+  const handleOwnerChange = (e: FormEvent<HTMLInputElement>) => {
+    setOwner(e.currentTarget.value);
+  };
+  const handleRepositoryNameChange = (e: FormEvent<HTMLInputElement>) => {
+    setRepositoryName(e.currentTarget.value);
   };
 
   return (
     <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
       <Stack align={"center"}>
         <Heading fontSize={"4xl"} textAlign={"center"}>
-          Add repository
+          New repository
         </Heading>
       </Stack>
       <Box
@@ -49,7 +46,7 @@ export const AddRepository: React.FC<Props> = (props) => {
             <Box>
               <FormControl id="ownerName" isRequired>
                 <FormLabel>Owner</FormLabel>
-                <Input type="text" />
+                <Input type="text" onChange={(e) => handleOwnerChange(e)} />
               </FormControl>
             </Box>
             <Box>
@@ -60,7 +57,10 @@ export const AddRepository: React.FC<Props> = (props) => {
             <Box>
               <FormControl id="repositoryName" isRequired>
                 <FormLabel>Repository name</FormLabel>
-                <Input type="text" />
+                <Input
+                  type="text"
+                  onChange={(e) => handleRepositoryNameChange(e)}
+                />
               </FormControl>
             </Box>
           </HStack>
@@ -68,6 +68,7 @@ export const AddRepository: React.FC<Props> = (props) => {
             <Button
               colorScheme="teal"
               size="lg"
+              disabled={owner.length === 0 || repositoryName.length === 0}
             >
               Save
             </Button>
