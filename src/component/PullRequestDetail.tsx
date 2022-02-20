@@ -15,10 +15,10 @@ export const PullRequestDetail = () => {
   const navigate = useNavigate();
   const { pullId } = useParams();
   const { state } = useContext(GitHubContext);
-  const pr = state.selectedRepositoryInfo.pulls.find((pull) =>
-    pull.number === pullId
+  const pr = state.selectedRepositoryInfo.pulls.find(
+    (pull) => pull.number === pullId
   );
-  const comments = useMemo(() => (pr?.comments || []), [pr]);
+  const comments = useMemo(() => pr?.comments || [], [pr]);
 
   const data = useMemo<Column[]>(
     () =>
@@ -28,7 +28,7 @@ export const PullRequestDetail = () => {
         user: comment.user,
         createdAt: comment.createdAt,
       })),
-    [comments],
+    [comments]
   );
 
   const columns = useMemo(
@@ -56,7 +56,7 @@ export const PullRequestDetail = () => {
         accessor: "createdAt",
       },
     ],
-    [],
+    []
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -72,57 +72,49 @@ export const PullRequestDetail = () => {
         {comments.length} PR comments found.
       </Text>
       <Box marginY={5}>
-        <Button
-          variant="outline"
-          onClick={() => navigate(-1)}
-        >
+        <Button variant="outline" onClick={() => navigate(-1)}>
           Back
         </Button>
       </Box>
-      {comments.length > 0 &&
-        (
-          <Table {...getTableProps()} variant="simple" size="sm">
-            <Thead>
-              {headerGroups.map((
-                headerGroup,
-              ) => (
-                <Tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column: any) => (
-                    <Th
-                      {...column.getHeaderProps(
-                        column.getSortByToggleProps(),
-                      )}
-                      isNumeric={column.isNumeric}
+      {comments.length > 0 && (
+        <Table {...getTableProps()} variant="simple" size="sm">
+          <Thead>
+            {headerGroups.map((headerGroup) => (
+              <Tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column: any) => (
+                  <Th
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    isNumeric={column.isNumeric}
+                  >
+                    <SortableHeaderColumn
+                      column={column.render("Header")}
+                      isSorted={column.isSorted}
+                      isSortedDesc={column.isSortedDesc}
+                    />
+                  </Th>
+                ))}
+              </Tr>
+            ))}
+          </Thead>
+          <Tbody {...getTableBodyProps()}>
+            {rows.map((row) => {
+              prepareRow(row);
+              return (
+                <Tr {...row.getRowProps()}>
+                  {row.cells.map((cell: any) => (
+                    <Td
+                      {...cell.getCellProps()}
+                      isNumeric={cell.column.isNumeric}
                     >
-                      <SortableHeaderColumn
-                        column={column.render("Header")}
-                        isSorted={column.isSorted}
-                        isSortedDesc={column.isSortedDesc}
-                      />
-                    </Th>
+                      {cell.render("Cell")}
+                    </Td>
                   ))}
                 </Tr>
-              ))}
-            </Thead>
-            <Tbody {...getTableBodyProps()}>
-              {rows.map((row) => {
-                prepareRow(row);
-                return (
-                  <Tr {...row.getRowProps()}>
-                    {row.cells.map((cell: any) => (
-                      <Td
-                        {...cell.getCellProps()}
-                        isNumeric={cell.column.isNumeric}
-                      >
-                        {cell.render("Cell")}
-                      </Td>
-                    ))}
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        )}
+              );
+            })}
+          </Tbody>
+        </Table>
+      )}
     </BaseLayout>
   );
 };

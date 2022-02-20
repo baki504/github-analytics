@@ -12,19 +12,22 @@ import { ColorModeSwitcher } from "../ColorModeSwitcher";
 import { switchRepository } from "../utils/dataFetcher";
 import { GitHubContext } from "./GitHubContextProvider";
 import { AddIconLink } from "./AddIconLink";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
+  const navigate = useNavigate();
   const { state, dispatch } = useContext(GitHubContext);
   const { repositoryInfoList, selectedRepositoryInfo, isLoading } = state;
 
   const switchRepositoryHandler = (e: FormEvent<HTMLSelectElement>) => {
     const { value } = e.currentTarget;
-    const targetRepository = repositoryInfoList.find((repo) =>
-      repo.key === value
+    const targetRepository = repositoryInfoList.find(
+      (repo) => repo.key === value
     );
     if (targetRepository) {
       switchRepository(dispatch, selectedRepositoryInfo, targetRepository);
     }
+    navigate("/");
   };
 
   return (
@@ -57,26 +60,20 @@ export const Header = () => {
           direction={"row"}
           spacing={6}
         >
-          {repositoryInfoList.length > 1 &&
-            (
-              <Select
-                placeholder="Select repository"
-                onChange={switchRepositoryHandler}
-                defaultValue={selectedRepositoryInfo.key}
-                disabled={isLoading}
-              >
-                {repositoryInfoList.map((
-                  repository,
-                ) => (
-                  <option
-                    key={repository.key}
-                    value={repository.key}
-                  >
-                    {repository.key}
-                  </option>
-                ))}
-              </Select>
-            )}
+          {repositoryInfoList.length > 1 && (
+            <Select
+              placeholder="Select repository"
+              onChange={switchRepositoryHandler}
+              defaultValue={selectedRepositoryInfo.key}
+              disabled={isLoading}
+            >
+              {repositoryInfoList.map((repository) => (
+                <option key={repository.key} value={repository.key}>
+                  {repository.key}
+                </option>
+              ))}
+            </Select>
+          )}
           <AddIconLink />
           <ColorModeSwitcher justifySelf="flex-end" />
         </Stack>

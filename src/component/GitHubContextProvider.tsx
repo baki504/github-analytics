@@ -34,7 +34,7 @@ const reducer = (state: GitHubContext, action: Action) => {
         ...state,
         selectedRepositoryInfo: {
           ...state.selectedRepositoryInfo,
-          summary: action.payload,
+          summaryRecords: action.payload,
         },
       };
     case UPDATE_REPOSITORY_INFO:
@@ -43,7 +43,7 @@ const reducer = (state: GitHubContext, action: Action) => {
         selectedRepositoryInfo: action.payload.repositoryInfoTo,
         repositoryInfoList: updateRepositoryInfo(
           state.repositoryInfoList,
-          action.payload.repositoryInfoFrom,
+          action.payload.repositoryInfoFrom
         ),
       };
     default:
@@ -53,20 +53,18 @@ const reducer = (state: GitHubContext, action: Action) => {
 
 const updateRepositoryInfo = (
   repositoryInfoList: RepositoryInfo[],
-  repositoryInfoFrom: any,
-) => (
-  repositoryInfoList.map((
-    repoInfo,
-  ) => (repoInfo.key === repositoryInfoFrom.key
-    ? repositoryInfoFrom
-    : repoInfo)
-  )
-);
+  repositoryInfoFrom: any
+) =>
+  repositoryInfoList.map((repoInfo) =>
+    repoInfo.key === repositoryInfoFrom.key ? repositoryInfoFrom : repoInfo
+  );
 
-export const GitHubContext = createContext({} as {
-  state: GitHubContext;
-  dispatch: React.Dispatch<Action>;
-});
+export const GitHubContext = createContext(
+  {} as {
+    state: GitHubContext;
+    dispatch: React.Dispatch<Action>;
+  }
+);
 
 const defaultKeys = process.env.REACT_APP_REPOSITORY_KEYS?.split(",") || [];
 const key = defaultKeys.length > 0 ? defaultKeys[0] : "";
