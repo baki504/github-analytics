@@ -44,25 +44,27 @@ export const PullRequestTable = () => {
   const { pulls, key, owner, name } = state.selectedRepositoryInfo;
 
   useEffect(() => {
-    key.length > 0 && pulls.length === 0 && fetchPulls(dispatch, key);
-    updatePrSummary(dispatch, getPrSummary(pulls));
+    !pulls && fetchPulls(dispatch, key);
+    pulls && updatePrSummary(dispatch, getPrSummary(pulls));
   }, [dispatch, key, pulls]);
 
   const data = useMemo<Column[]>(
     () =>
-      pulls.map((pull) => ({
-        number: pull.number,
-        title: pull.title,
-        user: pull.user,
-        state: pull.state,
-        createdAt: pull.createdAt,
-        comments: pull.comments.length.toString(),
-        filesChanged: pull.filesChanged.toString(),
-        additions: pull.additions.toString(),
-        deletions: pull.deletions.toString(),
-        changes: pull.changes.toString(),
-        link: pull.url,
-      })),
+      pulls
+        ? pulls.map((pull) => ({
+          number: pull.number,
+          title: pull.title,
+          user: pull.user,
+          state: pull.state,
+          createdAt: pull.createdAt,
+          comments: pull.comments.length.toString(),
+          filesChanged: pull.filesChanged.toString(),
+          additions: pull.additions.toString(),
+          deletions: pull.deletions.toString(),
+          changes: pull.changes.toString(),
+          link: pull.url,
+        }))
+        : [],
     [pulls],
   );
 
@@ -148,19 +150,19 @@ export const PullRequestTable = () => {
         </ChakraLink>
       </Heading>
       <Text marginTop={5} color={"gray"}>
-        {pulls.length} PRs found.
+        {pulls ? `${pulls.length} results found.` : "fetching..."}
       </Text>
       <Box marginY={5}>
         <Button
           colorScheme="teal"
           onClick={() => navigate("/pulls/summary")}
-          disabled={pulls.length === 0}
+          disabled={pulls && pulls.length === 0}
         >
           View summary
         </Button>
       </Box>
-      {pulls.length
-        ? (
+      {pulls && pulls.length > 0 &&
+        (
           <>
             <Table {...getTableProps()} variant="simple" size="sm">
               <Thead>
@@ -204,11 +206,6 @@ export const PullRequestTable = () => {
               </Tbody>
             </Table>
           </>
-        )
-        : (
-          <Text marginTop={5} color={"gray"}>
-            Fetching data...
-          </Text>
         )}
     </BaseLayout>
   );

@@ -75,7 +75,7 @@ const createInitialRepositoryInfo = (repositoryKey: string) => {
     key: repositoryKey,
     owner,
     name,
-    pulls: [],
+    pulls: undefined,
     summaryRecords: [],
   };
 };
