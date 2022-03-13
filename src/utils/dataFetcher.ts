@@ -41,7 +41,7 @@ const createPullRequests = async (pulls: any) =>
     comments: 0,
     createdAt: localeDateString(pull.created_at),
     url: pull.html_url,
-  })).sort((a: any, b: any) => stringComparator(a.createdAt, b.createdAt));
+  })).sort((a: any, b: any) => stringComparator(b.createdAt, a.createdAt));
 
 const createComments = async (prId: string, repositoryKey: string) =>
   (await callComments(repositoryKey, prId)).map((comment: any) => ({

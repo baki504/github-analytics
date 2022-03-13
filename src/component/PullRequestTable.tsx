@@ -8,7 +8,7 @@ import { useSortBy, useTable } from "react-table";
 import { BaseLayout } from "../layout/BaseLayout";
 import { updatePrSummary } from "../utils/action";
 import { fetchPulls } from "../utils/dataFetcher";
-import { stringComparator } from "../utils/utils";
+import { getFixedNumber } from "../utils/utils";
 import { GitHubContext } from "./GitHubContextProvider";
 import { SortableHeaderColumn } from "./SortableHeaderColumn";
 
@@ -20,8 +20,11 @@ const getPrSummary = (pulls: PullRequest[]): Summary[] =>
         pr.totalPrs++;
         pr.totalComments = pr.totalComments + pull.comments.length;
         pr.filesChanged = pr.filesChanged + pull.filesChanged;
-        pr.averageComments = pr.totalComments / pr.totalPrs;
-        pr.averageFiles = pr.filesChanged / pr.totalPrs;
+        pr.averageComments = getFixedNumber(
+          (pr.totalComments / pr.totalPrs),
+          1,
+        );
+        pr.averageFiles = getFixedNumber((pr.filesChanged / pr.totalPrs), 1);
         return summaryRecords;
       }
       return [
@@ -36,7 +39,7 @@ const getPrSummary = (pulls: PullRequest[]): Summary[] =>
         },
       ];
     }, [])
-    .sort((a, b) => stringComparator(a.user, b.user));
+    .sort((a, b) => b.totalPrs - a.totalPrs);
 
 export const PullRequestTable = () => {
   const navigate = useNavigate();
@@ -156,7 +159,7 @@ export const PullRequestTable = () => {
         <Button
           colorScheme="teal"
           onClick={() => navigate("/pulls/summary")}
-          disabled={pulls && pulls.length === 0}
+          disabled={!pulls || pulls.length === 0}
         >
           View summary
         </Button>

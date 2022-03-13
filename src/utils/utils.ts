@@ -5,3 +5,6 @@ export const stringComparator = (
   a: string,
   b: string,
 ) => ((a < b) ? -1 : 1);
+
+export const getFixedNumber = (num: number, digits: number) =>
+  Number(num.toFixed(digits));

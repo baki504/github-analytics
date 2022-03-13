@@ -12,7 +12,7 @@ export const sendRequest = async (repositoryKey: string, uri: string) => {
 
   try {
     const response = await axios.get(
-      `https://${hostName}/repos/${repositoryKey}/${uri}?per_page=100`,
+      `https://${hostName}/repos/${repositoryKey}/${uri}`,
       { headers },
     );
     return response.data;
@@ -22,8 +22,8 @@ export const sendRequest = async (repositoryKey: string, uri: string) => {
 };
 
 export const callPulls = async (repositoryKey: string) =>
-  sendRequest(repositoryKey, "pulls");
+  sendRequest(repositoryKey, "pulls?state=all&direction=desc&per_page=100");
 export const callComments = async (repositoryKey: string, pullId: string) =>
-  sendRequest(repositoryKey, `pulls/${pullId}/comments`);
+  sendRequest(repositoryKey, `pulls/${pullId}/comments?per_page=100`);
 export const callPrFiles = async (repositoryKey: string, pullId: string) =>
-  sendRequest(repositoryKey, `pulls/${pullId}/files`);
+  sendRequest(repositoryKey, `pulls/${pullId}/files?per_page=100`);
